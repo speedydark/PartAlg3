@@ -565,8 +565,8 @@ public:
 int main()
 
 {
-	infile.open("C:/Users/lpetn_000/desktop/PK-recursive/rf01084.txt");
-	outfile.open("C:/Users/lpetn_000/desktop/PK-recursive/rf01084_out.txt");
+	infile.open("/Users/just/Documents/petingi/PKB236.txt");
+	outfile.open("/Users/just/Documents/petingi/PKB236_out.txt");
 
 	clock_t start;
 	clock_t end;
@@ -613,7 +613,6 @@ int main()
     infile.close();
 	outfile.close();
 	
-	system("pause");
 	return 0;
 
 }
