@@ -565,8 +565,8 @@ public:
 int main()
 
 {
-	infile.open("/Users/just/Documents/petingi/PKB236.txt");
-	outfile.open("/Users/just/Documents/petingi/PKB236_out.txt");
+	infile.open("/Users/just/Documents/GitHub/PartAlg3/PKB236.txt"); 
+	outfile.open("/Users/just/Documents/GitHub/PartAlg3/PKB236_out.txt");
 
 	clock_t start;
 	clock_t end;

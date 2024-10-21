@@ -35,15 +35,24 @@ def extract_edges_from_output(output_file):
 def draw_graph(edges):
     G = nx.Graph()
     G.add_edges_from(edges)
-    pos = nx.spring_layout(G)
+    
+    self_loops = [(u, v) for u, v in edges if u == v]
+    
+    pos = nx.spring_layout(G)  
+    
     nx.draw_networkx_nodes(G, pos, node_size=700)
-    nx.draw_networkx_edges(G, pos)
+    nx.draw_networkx_edges(G, pos, edgelist=[edge for edge in edges if edge not in self_loops])
+    
+    nx.draw_networkx_edges(G, pos, edgelist=self_loops, edge_color='r', style='dashed', width=2)
+    
     nx.draw_networkx_labels(G, pos)
+    
     plt.show()
 
-input_file = "/Users/just/Documents/petingi/PKB236.txt" 
-output_file = "/Users/just/Documents/petingi/PKB236_out.txt"  
+input_file = "/Users/just/Documents/GitHub/PartAlg3/PKB236.txt" 
+output_file = "/Users/just/Documents/GitHub/PartAlg3/PKB236_out.txt"  
 
 run_cpp_program(input_file, output_file)
 edges = extract_edges_from_output(output_file)
+edges.append((1,1)) # self-loop test - remove later.
 draw_graph(edges)
