@@ -565,8 +565,30 @@ public:
 int main()
 
 {
-	infile.open("/Users/just/Documents/GitHub/PartAlg3/PKB236.txt"); 
-	outfile.open("/Users/just/Documents/GitHub/PartAlg3/PKB236_out.txt");
+	string input_file, output_file;
+
+	/*
+	cout << "Enter the input file path: ";
+	cin >> input_file;
+	cout << "Enter the desired output file path: ";
+	cin >> output_file;
+	*/
+
+	input_file = "matrix.txt";
+	output_file = "matrix_out.txt";
+
+	infile.open(input_file);
+    if (!infile) {
+        std::cerr << "Error: Could not open input file " << input_file << std::endl;
+        return 1;
+    }
+
+	outfile.open(output_file);
+    if (!outfile) {
+        std::cerr << "Error: Could not open output file " << output_file << std::endl;
+        infile.close();
+        return 1;
+    }
 
 	clock_t start;
 	clock_t end;
