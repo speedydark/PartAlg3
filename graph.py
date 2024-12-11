@@ -74,45 +74,42 @@ def add_edges_from_matrix(G, matrix):
                     G.add_edge(i, j, weight=weight)
 
 def draw_combined_graph(matrix, blocks, block_types, G):
-    pos = nx.spring_layout(G)
+    pos = {}
+    offset = 1.6  # Distance between separate components
+
+    # Create distinct positions for each block
+    for i, block in enumerate(blocks):
+        block_pos = nx.spring_layout(nx.Graph(block), seed=i)
+        for node in block_pos:
+            pos[f"{node}_block_{i}"] = block_pos[node] + np.array([i * offset, 0])
 
     num_blocks = len(blocks)
     cmap = plt.colormaps['tab20']
     block_colors = [cmap(i / num_blocks) for i in range(num_blocks)]
 
-    edge_colors = {}
-    for i, edges in enumerate(blocks):
-        block_color = block_colors[i]
-        G.add_edges_from(edges)
-
-        for edge in edges:
-            edge_colors[edge] = block_color
-
     plt.figure(figsize=(12, 12))
     plt.title("Graph with Colored Blocks and Weights", fontsize=16)
 
-    nx.draw_networkx_nodes(G, pos, node_size=700, node_color="skyblue")
+    for i, (block, block_type) in enumerate(zip(blocks, block_types)):
+        block_color = block_colors[i]
+        block_edges = [(f"{u}_block_{i}", f"{v}_block_{i}") for u, v in block]
 
-    for edge, color in edge_colors.items():
-        nx.draw_networkx_edges(G, pos, edgelist=[edge], edge_color=[color], width=2)
+        G_block = nx.Graph()
+        G_block.add_edges_from(block_edges)
 
-    nx.draw_networkx_labels(G, pos, font_size=12, font_color="black")
+        # Shift positions to create a clear separation while keeping blocks aligned
+        for node in G_block.nodes:
+            pos[node] += np.array([0, i * offset])
 
-    edge_labels = {(u, v): G[u][v][0]['weight'] for u, v in G.edges()}
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10, font_color="red")
+        nx.draw_networkx_nodes(G_block, pos, node_size=700, node_color="skyblue")
+        nx.draw_networkx_edges(G_block, pos, edgelist=block_edges, edge_color=block_color, width=2)
 
-    legend_handles = []
-    for i, block_type in enumerate(block_types):
-        handle = plt.Line2D([], [], color=block_colors[i], label=block_type, linewidth=2)
-        legend_handles.append(handle)
+        # Add node labels
+        labels = {node: node.split("_")[0] for node in G_block.nodes}
+        nx.draw_networkx_labels(G_block, pos, labels=labels, font_size=12, font_color="black")
 
-    plt.legend(
-        handles=legend_handles, 
-        title="Block Types", 
-        loc="center left", 
-        bbox_to_anchor=(1.00, 0.5), 
-        fontsize=10
-    )
+        edge_labels = {(f"{u}_block_{i}", f"{v}_block_{i}"): G[u][v][0]['weight'] for u, v in block}
+        nx.draw_networkx_edge_labels(G_block, pos, edge_labels=edge_labels, font_size=10, font_color="red")
 
     plt.tight_layout()
     plt.show()
