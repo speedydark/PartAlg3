@@ -75,7 +75,7 @@ def add_edges_from_matrix(G, matrix):
 
 def draw_combined_graph(matrix, blocks, block_types, G):
     pos = {}
-    offset = 1.6  # Distance between separate components
+    offset = 1.8  # Distance between separate components
 
     # Create distinct positions for each block
     for i, block in enumerate(blocks):
@@ -84,14 +84,11 @@ def draw_combined_graph(matrix, blocks, block_types, G):
             pos[f"{node}_block_{i}"] = block_pos[node] + np.array([i * offset, 0])
 
     num_blocks = len(blocks)
-    cmap = plt.colormaps['tab20']
-    block_colors = [cmap(i / num_blocks) for i in range(num_blocks)]
 
     plt.figure(figsize=(12, 12))
-    plt.title("Graph with Colored Blocks and Weights", fontsize=16)
+    plt.title("Graph with Separated Blocks and Weights", fontsize=16)
 
     for i, (block, block_type) in enumerate(zip(blocks, block_types)):
-        block_color = block_colors[i]
         block_edges = [(f"{u}_block_{i}", f"{v}_block_{i}") for u, v in block]
 
         G_block = nx.Graph()
@@ -102,7 +99,7 @@ def draw_combined_graph(matrix, blocks, block_types, G):
             pos[node] += np.array([0, i * offset])
 
         nx.draw_networkx_nodes(G_block, pos, node_size=700, node_color="skyblue")
-        nx.draw_networkx_edges(G_block, pos, edgelist=block_edges, edge_color=block_color, width=2)
+        nx.draw_networkx_edges(G_block, pos, edgelist=block_edges, edge_color="black", width=2)
 
         # Add node labels
         labels = {node: node.split("_")[0] for node in G_block.nodes}
