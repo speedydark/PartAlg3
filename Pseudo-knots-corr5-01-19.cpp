@@ -562,30 +562,26 @@ public:
 };// end class
 
 
-int main()
+int main(int argc, char* argv[])
 
 {
-	string input_file, output_file;
-
-	/*
-	cout << "Enter the input file path: ";
-	cin >> input_file;
-	cout << "Enter the desired output file path: ";
-	cin >> output_file;
-	*/
-
-	input_file = "matrix.txt";
-	output_file = "matrix_out.txt";
-
-	infile.open(input_file);
-    if (!infile) {
-        std::cerr << "Error: Could not open input file " << input_file << std::endl;
+	if (argc != 3) {
+        cerr << "Usage: " << argv[0] << " <input_file> <output_file>" << endl;
         return 1;
     }
 
-	outfile.open(output_file);
+	string input_file = argv[1];
+    string output_file = argv[2];
+
+    infile.open(input_file);
+    if (!infile) {
+        cerr << "Error: Could not open input file " << input_file << endl;
+        return 1;
+    }
+
+    outfile.open(output_file);
     if (!outfile) {
-        std::cerr << "Error: Could not open output file " << output_file << std::endl;
+        cerr << "Error: Could not open output file " << output_file << endl;
         infile.close();
         return 1;
     }
@@ -595,12 +591,8 @@ int main()
 	float facto_time;
 	float facto_irr_time;
 	float facto_irr_e_time;
-	string motif_number;
 	cout<< endl << "Please enter the number of vertices: ";
 	cin >>nods;
-
-	cout<< endl << "Please enter motif number: ";
-	cin >> motif_number;
 
 	edgs=0;
 	dim=0;
@@ -608,7 +600,7 @@ int main()
     Visited=new bool [nods];
 	int b_counter = 0;
 
-	outfile << endl << "--------------------- Motif :" << motif_number << " -----------------------------" << endl;
+	outfile << endl << "--------------------- Motif :" << "PartAlg3" << " -----------------------------" << endl;
 
 
     //outfile << " +++++++++++++++ number of vertices: " << nods << "    ====================" << endl;
@@ -623,7 +615,7 @@ int main()
 
         G.Bi_Connect(-1, 0);
 
-		outfile << endl << "----------- Summary information for Motif :" << motif_number << " --------------------------------" << endl;
+		outfile << endl << "----------- Summary information for Motif :" << "PartAlg3" << " --------------------------------" << endl;
 		outfile << "----------- Total number of blocks: " << numreg_blocks + numpseudo_blocks + numrpseudo_blocks << endl;
 		outfile << "----------- number of non-recursive PK blocks: " << numpseudo_blocks << endl;
 		outfile << "----------- number of recursive PK blocks: " << numrpseudo_blocks << endl;
