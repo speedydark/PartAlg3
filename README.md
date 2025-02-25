@@ -33,7 +33,7 @@ This document shows you how to set up and use both components together. If you p
 - **C++ Compiler**  
   You need a C++ compiler (such as `g++`) to compile `Pseudo-knots-corr5-01-19.cpp`.  
   - On most Linux and macOS systems, you can install via your package manager (e.g., `sudo apt-get install g++` on Ubuntu).
-  - On Windows, install [MinGW](http://www.mingw.org/) or use another environment that provides `g++`.
+  - On Windows, install [MinGW](http://www.mingw.org/) or use another environment that provides a C++ compiler like `g++` or `clang`.
 
 - **Python 3.7+**  
   Make sure you have Python 3 installed.
@@ -294,3 +294,4 @@ Here’s how you might run the script with this matrix:
 
 ---
 
+-jkiddin, HanVar
