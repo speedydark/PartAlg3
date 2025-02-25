@@ -32,7 +32,7 @@ This document shows you how to set up and use both components together. If you p
 
 - **C++ Compiler**  
   You need a C++ compiler (such as `g++`) to compile `Pseudo-knots-corr5-01-19.cpp`.  
-  - On most Linux and macOS systems, you can install via your package manager (e.g., `sudo apt-get install g++` on Ubuntu).
+  - On most Linux and macOS systems, you can install via your package manager (e.g., `sudo apt-get install g++`).
   - On Windows, install [MinGW](http://www.mingw.org/) or use another environment that provides a C++ compiler like `g++` or `clang`.
 
 - **Python 3.7+**  

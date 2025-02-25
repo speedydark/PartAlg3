@@ -1,4 +1,4 @@
-*_out.txt
+*.txt
 *_temp.py
 .vscode/settings.json
 pseudo_knots.exe
