@@ -138,51 +138,95 @@ def draw_combined_graph(matrix, blocks, block_types, G):
     :param block_types: A parallel list of block types (e.g., 'Recursive PK', 'Regular')
     :param G: The original network (MultiGraph) containing all edges with their weights
     """
-    pos = {}
-    offset = 1.8  # Used to shift each block in the layout so they don't overlap.
 
-    # Generate a layout for each block and store its positions in 'pos' dict.
-    for i, block in enumerate(blocks):
-        # spring_layout calculates positions for a graph's nodes in a spring-force way.
-        block_pos = nx.spring_layout(nx.Graph(block), seed=i)
-        for node in block_pos:
-            # Each node is named "node_block_index" to avoid collisions between blocks.
-            pos[f"{node}_block_{i}"] = block_pos[node] + np.array([i * offset, 0])
+    pos = nx.spring_layout(G, seed=42)
 
-    # Prepare the figure
+    num_blocks = len(blocks)
+    cmap = plt.colormaps['tab20']
+    block_colors = [cmap(i / num_blocks) for i in range(num_blocks)]
+
+    edge_colors = {}
+    for i, edges in enumerate(blocks):
+        block_color = block_colors[i]
+        G.add_edges_from(edges)
+
+        for edge in edges:
+            edge_colors[edge] = block_color
+
     plt.figure(figsize=(12, 12))
-    plt.title("Graph with Separated Blocks and Weights", fontsize=16)
+    plt.title("Combined Graph", fontsize=16)
 
-    # Plot each block separately, offset vertically so they stack on the figure.
-    for i, (block, block_type) in enumerate(zip(blocks, block_types)):
-        # Renaming original nodes (u, v) as (u_block_i, v_block_i) for clarity.
-        block_edges = [(f"{u}_block_{i}", f"{v}_block_{i}") for u, v in block]
+    nx.draw_networkx_nodes(G, pos, node_size=700, node_color="skyblue")
 
-        # Create a local graph for just this block.
-        G_block = nx.Graph()
-        G_block.add_edges_from(block_edges)
+    for edge, color in edge_colors.items():
+        nx.draw_networkx_edges(G, pos, edgelist=[edge], edge_color=[color], width=2)
 
-        # Offset this entire block further up or down based on the block index (i).
-        for node in G_block.nodes:
-            pos[node] += np.array([0, i * offset])
+    nx.draw_networkx_labels(G, pos, font_size=12, font_color="black")
 
-        # Draw nodes and edges for this block.
-        nx.draw_networkx_nodes(G_block, pos, node_size=700, node_color="skyblue")
-        nx.draw_networkx_edges(G_block, pos, edgelist=block_edges, edge_color="black", width=2)
+    edge_labels = {(u, v): G[u][v][0]['weight'] for u, v in G.edges()}
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10, font_color="red")
 
-        # Create labels without the "_block_i" suffix, so they display as original node IDs.
-        labels = {node: node.split("_")[0] for node in G_block.nodes}
-        nx.draw_networkx_labels(G_block, pos, labels=labels, font_size=12, font_color="black")
+    legend_handles = []
+    for i, block_type in enumerate(block_types):
+        handle = plt.Line2D([], [], color=block_colors[i], label=block_type, linewidth=2)
+        legend_handles.append(handle)
 
-        # Display edge weights taken from the main graph G.
-        edge_labels = {
-            (f"{u}_block_{i}", f"{v}_block_{i}"): G[u][v][0]['weight'] for u, v in block
-        }
-        nx.draw_networkx_edge_labels(G_block, pos, edge_labels=edge_labels, font_size=10, font_color="red")
+    plt.legend(
+        handles=legend_handles, 
+        title="Block Types", 
+        loc="center left", 
+        bbox_to_anchor=(1.00, 0.5), 
+        fontsize=10
+    )
 
-    # Adjust spacing and show the plotted figure.
     plt.tight_layout()
     plt.show()
+    
+    # pos = {}
+    # offset = 1.8  # Used to shift each block in the layout so they don't overlap.
+
+    # # Generate a layout for each block and store its positions in 'pos' dict.
+    # for i, block in enumerate(blocks):
+    #     # spring_layout calculates positions for a graph's nodes in a spring-force way.
+    #     block_pos = nx.spring_layout(nx.Graph(block), seed=i)
+    #     for node in block_pos:
+    #         # Each node is named "node_block_index" to avoid collisions between blocks.
+    #         pos[f"{node}_block_{i}"] = block_pos[node] + np.array([i * offset, 0])
+
+    # # Prepare the figure
+    # plt.figure(figsize=(12, 12))
+    # plt.title("Graph with Separated Blocks and Weights", fontsize=16)
+
+    # # Plot each block separately, offset vertically so they stack on the figure.
+    # for i, (block, block_type) in enumerate(zip(blocks, block_types)):
+    #     # Renaming original nodes (u, v) as (u_block_i, v_block_i) for clarity.
+    #     block_edges = [(f"{u}_block_{i}", f"{v}_block_{i}") for u, v in block]
+
+    #     # Create a local graph for just this block.
+    #     G_block = nx.Graph()
+    #     G_block.add_edges_from(block_edges)
+
+    #     # Offset this entire block further up or down based on the block index (i).
+    #     for node in G_block.nodes:
+    #         pos[node] += np.array([0, i * offset])
+
+    #     # Draw nodes and edges for this block.
+    #     nx.draw_networkx_nodes(G_block, pos, node_size=700, node_color="skyblue")
+    #     nx.draw_networkx_edges(G_block, pos, edgelist=block_edges, edge_color="black", width=2)
+
+    #     # Create labels without the "_block_i" suffix, so they display as original node IDs.
+    #     labels = {node: node.split("_")[0] for node in G_block.nodes}
+    #     nx.draw_networkx_labels(G_block, pos, labels=labels, font_size=12, font_color="black")
+
+    #     # Display edge weights taken from the main graph G.
+    #     edge_labels = {
+    #         (f"{u}_block_{i}", f"{v}_block_{i}"): G[u][v][0]['weight'] for u, v in block
+    #     }
+    #     nx.draw_networkx_edge_labels(G_block, pos, edge_labels=edge_labels, font_size=10, font_color="red")
+
+    # # Adjust spacing and show the plotted figure.
+    # plt.tight_layout()
+    # plt.show()
 
 if __name__ == "__main__":
     # Prompt the user for the file paths. If blank, use defaults in the current working directory.
